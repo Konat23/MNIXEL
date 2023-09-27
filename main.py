@@ -12,12 +12,12 @@ Blue = (0, 0, 255)
 Gray = (127, 127, 127)
 
 # Tamaños
-scale = 2.5 # para tener mas pixeles poner un numero mayor que 1
+scale = 1 # para tener mas pixeles poner un numero mayor que 1
 filas = int(28*scale)
 columnas = int(28*scale)
 border = 2
 
-margin = 10 # pixeles que se consideran cerca 
+margin = 15 # pixeles que se consideran cerca 
 
 
 board_size =(560,560) #tamaño de de la sona donde se dibujara
@@ -30,7 +30,7 @@ centersize = (size[0]/2,size[1]/2)
 import pygame, sys
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
-surfaceOne = pygame.Surface(board_size)
+
 
 clock = pygame.time.Clock()
 
@@ -47,8 +47,6 @@ class Pixel():
         self.rect = pygame.Rect(self.left , self.top , self.width, self.height)
         self.insiderect = pygame.Rect(loc[0]+border/2, loc[1]+border/2, pixel_size[0]-border, pixel_size[1]-border)
 
-        
-
     def draw(self,surface, colorborder):
         
         pygame.draw.rect(surface, colorborder, self.rect)
@@ -60,7 +58,22 @@ class Pixel():
         """  
         if (mouse[0]> self.left-margin) and (mouse[0] < self.left+self.width+margin):
             if (mouse[1]> self.top-margin) and (mouse[1] < self.top+self.height+margin):
-                self.color = 'white'
+                self.color = (255,255,255)
+
+class Grid():
+    def __init__(self,size,offset) -> None:
+        self.offset = offset
+        self.surfaceOne = pygame.Surface(size)
+        self.array = [[Pixel((j*pixel_size[0],i*pixel_size[1])) for i in range(columnas)] for j in range(filas)]
+    
+    def draw(self):
+        screen.blit(self.surfaceOne, self.offset)
+        for raw in self.array:
+            for pixel in raw:
+                pixel.draw(self.surfaceOne, Gray)
+                if clic_izquierdo:
+                    pixel.paint((mouse_pos[0]-offset_surface[0],mouse_pos[1]-offset_surface[1]))
+
 
 
 def events():
@@ -69,25 +82,23 @@ def events():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-            
-array = [[Pixel((j*pixel_size[0],i*pixel_size[1])) for i in range(columnas)] for j in range(filas)]
+
+offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]     
+mygrid = Grid(board_size,offset_surface)
 while True:    
     events()
     screen.fill(Black) #color de fondo y limpia pantalla   
         
     #------------ ZONA DE DIBUJO -----------------#
-    offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]
-    screen.blit(surfaceOne, offset_surface)
+    
+    
     mouse = pygame.mouse
 
     # Verifica si el botón izquierdo del mouse está presionado (clic)
     clic_izquierdo, _, _ = mouse.get_pressed()
     mouse_pos = mouse.get_pos()
-    for raw in array:
-        for pixel in raw:
-            pixel.draw(surfaceOne, Gray)
-            if clic_izquierdo:
-                pixel.paint((mouse_pos[0]-offset_surface[0],mouse_pos[1]-offset_surface[1]))
+    
+    mygrid.draw()
     
     
     #-----------FIN ZONA DE DIBUJO ---------------#            
