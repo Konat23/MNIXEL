@@ -93,11 +93,7 @@ def events():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-                if slider.handle.collidepoint(event.pos):
-                    slider.dragging = True
-        elif event.type == pygame.MOUSEBUTTONUP:
-            slider.dragging = False
+        slider.handle_event(event)
 
 offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]     
 mygrid = Grid(board_size,offset_surface)

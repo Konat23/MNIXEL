@@ -25,6 +25,12 @@ class Slider:
             self.value = (self.handle.x - self.rect.left) / (self.rect.width - self.handle.width)
     def get_value(self):
         return self.value
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.handle.collidepoint(event.pos):
+                    self.dragging = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.dragging = False
 
 def main():
     pygame.init()
