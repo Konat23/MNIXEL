@@ -2,7 +2,7 @@
 @author: Konat
 Codigo principal MNIXEL 
 """
-
+import numpy as np
 # RGB Colores
 Black = (0, 0, 0)
 White =(255, 255, 255)
@@ -12,7 +12,7 @@ Blue = (0, 0, 255)
 Gray = (127, 127, 127)
 
 # Tamaños
-scale = 1 # para tener mas pixeles poner un numero mayor que 1
+scale = 20 # para tener mas pixeles poner un numero mayor que 1
 filas = int(28*scale)
 columnas = int(28*scale)
 border = 2
@@ -20,7 +20,7 @@ border = 2
 
 
 
-board_size =(560,560) #tamaño de de la sona donde se dibujara
+board_size =(560,560) #tamaño de de la zona donde se dibujara
 centerboard = (board_size[0]/2,board_size[1]/2)
 pixel_size = (board_size[0]/columnas,board_size[1]/filas)
 size = (1000, 700) # Tamaño de la ventana
@@ -30,6 +30,7 @@ centersize = (size[0]/2,size[1]/2)
 import pygame, sys
 from slider import Slider
 from button import Button
+from blackboard import Blackboard
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
 
@@ -97,16 +98,19 @@ def events():
             sys.exit()
         slider.handle_event(event)
         button.handle_event(event)
+        myboard.handle_event(event)
 
-offset_surface = [10, centersize[1]-centerboard[1]]     
-mygrid = Grid(board_size,offset_surface)
+offset_surface = [10, centersize[1]-centerboard[1]]
+#mygrid = Grid(board_size,offset_surface)
+
+myboard = Blackboard(board_size,offset_surface)
 
 slider = Slider(10, 10, 600, 20)
 button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
-
-while True:    
+M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
+while True:
     events()
-    screen.fill('gray15') #color de fondo y limpia pantalla   
+    screen.fill('gray15') #color de fondo y limpia pantalla
         
     #------------ ZONA DE DIBUJO -----------------#
     
@@ -123,9 +127,11 @@ while True:
 
     button.draw(screen)
 
-    mygrid.update(slider)
+    #mygrid.update(slider)
     
-    #-----------FIN ZONA DE DIBUJO ---------------#            
+    myboard.update(screen)
+    
+    #-----------FIN ZONA DE DIBUJO ---------------#
     #Actualizar pantalla
     pygame.display.flip()
     clock.tick(60)
