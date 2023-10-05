@@ -28,6 +28,7 @@ centersize = (size[0]/2,size[1]/2)
 
 # Pygame
 import pygame, sys
+from slider import Slider
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
 
@@ -82,9 +83,17 @@ def events():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+                if slider.handle.collidepoint(event.pos):
+                    slider.dragging = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            slider.dragging = False
 
 offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]     
 mygrid = Grid(board_size,offset_surface)
+
+slider = Slider(10, 10, 600, 20)
+
 while True:    
     events()
     screen.fill(Black) #color de fondo y limpia pantalla   
@@ -99,6 +108,9 @@ while True:
     mouse_pos = mouse.get_pos()
     
     mygrid.draw()
+
+    slider.update()
+    slider.draw(screen)
     
     
     #-----------FIN ZONA DE DIBUJO ---------------#            
