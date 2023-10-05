@@ -16,12 +16,15 @@ class Slider:
     def draw(self, screen):
         pygame.draw.rect(screen, WHITE, self.rect)
         pygame.draw.rect(screen, RED, self.handle)
+        print(self.value)
 
     def update(self):
         if self.dragging:
             mouse_x, _ = pygame.mouse.get_pos()
             self.handle.x = max(self.rect.left, min(self.rect.right - self.handle.width, mouse_x))
             self.value = (self.handle.x - self.rect.left) / (self.rect.width - self.handle.width)
+    def get_value(self):
+        return self.value
 
 def main():
     pygame.init()

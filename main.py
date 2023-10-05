@@ -17,7 +17,7 @@ filas = int(28*scale)
 columnas = int(28*scale)
 border = 2
 
-margin = 15 # pixeles que se consideran cerca 
+
 
 
 board_size =(560,560) #tamaño de de la sona donde se dibujara
@@ -45,6 +45,7 @@ class Pixel():
         self.height = pixel_size[1]
         self.color = 'black'
         
+        
         self.rect = pygame.Rect(self.left , self.top , self.width, self.height)
         self.insiderect = pygame.Rect(loc[0]+border/2, loc[1]+border/2, pixel_size[0]-border, pixel_size[1]-border)
 
@@ -53,7 +54,7 @@ class Pixel():
         pygame.draw.rect(surface, colorborder, self.rect)
         pygame.draw.rect(surface, self.color, self.insiderect)
 
-    def paint(self, mouse):
+    def paint(self, mouse,margin):
         """
         Esta funcion se encarga de colorear
         """  
@@ -66,6 +67,7 @@ class Grid():
         self.offset = offset
         self.surfaceOne = pygame.Surface(size)
         self.array = [[Pixel((j*pixel_size[0],i*pixel_size[1])) for i in range(columnas)] for j in range(filas)]
+        self.margin = 10 # pixeles que se consideran cerca 
     
     def draw(self):
         screen.blit(self.surfaceOne, self.offset)
@@ -73,7 +75,15 @@ class Grid():
             for pixel in raw:
                 pixel.draw(self.surfaceOne, Gray)
                 if clic_izquierdo:
-                    pixel.paint((mouse_pos[0]-offset_surface[0],mouse_pos[1]-offset_surface[1]))
+                    pixel.paint((mouse_pos[0]-offset_surface[0],mouse_pos[1]-offset_surface[1]),self.margin)
+    def set_margin(self,slider):
+        self.margin = slider.get_value()*20 # Va de 0 a 20 pixeles
+    
+    def update(self, slider):
+        self.draw()
+        self.set_margin(slider)
+
+
 
 
 
@@ -107,11 +117,12 @@ while True:
     clic_izquierdo, _, _ = mouse.get_pressed()
     mouse_pos = mouse.get_pos()
     
-    mygrid.draw()
+    
 
     slider.update()
     slider.draw(screen)
-    
+
+    mygrid.update(slider)
     
     #-----------FIN ZONA DE DIBUJO ---------------#            
     #Actualizar pantalla
