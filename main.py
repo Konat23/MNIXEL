@@ -23,7 +23,7 @@ border = 2
 board_size =(560,560) #tamaño de de la sona donde se dibujara
 centerboard = (board_size[0]/2,board_size[1]/2)
 pixel_size = (board_size[0]/columnas,board_size[1]/filas)
-size = (700, 700) # Tamaño de la ventana
+size = (1000, 700) # Tamaño de la ventana
 centersize = (size[0]/2,size[1]/2)
 
 # Pygame
@@ -46,13 +46,13 @@ class Pixel():
         self.height = pixel_size[1]
         self.color = 'black'
         
-        
-        self.rect = pygame.Rect(self.left , self.top , self.width, self.height)
-        self.insiderect = pygame.Rect(loc[0]+border/2, loc[1]+border/2, pixel_size[0]-border, pixel_size[1]-border)
+        self.insiderect = pygame.Rect(self.left , self.top , self.width, self.height)
+        #self.rect = pygame.Rect(self.left , self.top , self.width, self.height)
+        #self.insiderect = pygame.Rect(loc[0]+border/2, loc[1]+border/2, pixel_size[0]-border, pixel_size[1]-border)
 
     def draw(self,surface, colorborder):
         
-        pygame.draw.rect(surface, colorborder, self.rect)
+        #pygame.draw.rect(surface, colorborder, self.rect)
         pygame.draw.rect(surface, self.color, self.insiderect)
 
     def paint(self, mouse,margin):
@@ -98,15 +98,15 @@ def events():
         slider.handle_event(event)
         button.handle_event(event)
 
-offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]     
+offset_surface = [10, centersize[1]-centerboard[1]]     
 mygrid = Grid(board_size,offset_surface)
 
 slider = Slider(10, 10, 600, 20)
-button = Button(size[0]-100, size[0]-40, 100, 40, "Enviar", my_function)
+button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
 
 while True:    
     events()
-    screen.fill(Black) #color de fondo y limpia pantalla   
+    screen.fill('gray15') #color de fondo y limpia pantalla   
         
     #------------ ZONA DE DIBUJO -----------------#
     
