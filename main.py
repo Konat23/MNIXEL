@@ -23,12 +23,13 @@ border = 2
 board_size =(560,560) #tamaño de de la sona donde se dibujara
 centerboard = (board_size[0]/2,board_size[1]/2)
 pixel_size = (board_size[0]/columnas,board_size[1]/filas)
-size = (800, 800) # Tamaño de la ventana
+size = (700, 700) # Tamaño de la ventana
 centersize = (size[0]/2,size[1]/2)
 
 # Pygame
 import pygame, sys
 from slider import Slider
+from button import Button
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
 
@@ -84,7 +85,8 @@ class Grid():
         self.set_margin(slider)
 
 
-
+def my_function():
+    print("¡El botón ha sido clickeado!")
 
 
 def events():
@@ -94,11 +96,13 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
+        button.handle_event(event)
 
 offset_surface = [centersize[0]-centerboard[0], centersize[1]-centerboard[1]]     
 mygrid = Grid(board_size,offset_surface)
 
 slider = Slider(10, 10, 600, 20)
+button = Button(size[0]-100, size[0]-40, 100, 40, "Enviar", my_function)
 
 while True:    
     events()
@@ -115,8 +119,9 @@ while True:
     
     
 
-    slider.update()
-    slider.draw(screen)
+    slider.update(screen)
+
+    button.draw(screen)
 
     mygrid.update(slider)
     
