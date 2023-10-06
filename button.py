@@ -29,10 +29,10 @@ class Button:
         text_rect = text_surface.get_rect(center=self.rect.center)
         screen.blit(text_surface, text_rect)
 
-    def handle_event(self, event):
+    def handle_event(self, event,board, matriz):
         if event.type == pygame.MOUSEMOTION:
             # Comprueba si el mouse está sobre el botón
             self.hovered = self.rect.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN and self.hovered:
             # Llama a la función del botón si se hace clic en él
-            self.function()
+            self.function(board, matriz)

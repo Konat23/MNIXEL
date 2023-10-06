@@ -44,7 +44,7 @@ class Blackboard:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            if (self.gray_image.get_rect().collidepoint(mouse_x, mouse_y)):
+            if (self.gray_image.get_rect().collidepoint(mouse_x-self.pos[0], mouse_y-self.pos[1])):
                 self.dragging = True
             
         

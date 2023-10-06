@@ -12,7 +12,7 @@ Blue = (0, 0, 255)
 Gray = (127, 127, 127)
 
 # Tamaños
-scale = 20 # para tener mas pixeles poner un numero mayor que 1
+scale = 1 # para tener mas pixeles poner un numero mayor que 1
 filas = int(28*scale)
 columnas = int(28*scale)
 border = 2
@@ -20,7 +20,7 @@ border = 2
 
 
 
-board_size =(560,560) #tamaño de de la zona donde se dibujara
+board_size =(448,448) #tamaño de de la zona donde se dibujara
 centerboard = (board_size[0]/2,board_size[1]/2)
 pixel_size = (board_size[0]/columnas,board_size[1]/filas)
 size = (1000, 700) # Tamaño de la ventana
@@ -31,6 +31,7 @@ import pygame, sys
 from slider import Slider
 from button import Button
 from blackboard import Blackboard
+from image_p import *
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
 
@@ -56,13 +57,12 @@ class Pixel():
         #pygame.draw.rect(surface, colorborder, self.rect)
         pygame.draw.rect(surface, self.color, self.insiderect)
 
-    def paint(self, mouse,margin):
+    def paint(self, element):
         """
         Esta funcion se encarga de colorear
-        """  
-        if (mouse[0]> self.left-margin) and (mouse[0] < self.left+self.width+margin):
-            if (mouse[1]> self.top-margin) and (mouse[1] < self.top+self.height+margin):
-                self.color = (255,255,255)
+        """ 
+        color = int (element)
+        self.color = (color,color,color) # nivel de gris
 
 class Grid():
     def __init__(self,size,offset) -> None:
@@ -70,21 +70,33 @@ class Grid():
         self.surfaceOne = pygame.Surface(size)
         self.array = [[Pixel((j*pixel_size[0],i*pixel_size[1])) for i in range(columnas)] for j in range(filas)]
         self.margin = 10 # pixeles que se consideran cerca 
+        self.ishow = False
+        self.matriz = np.zeros((int(size[0]),int(size[1])), dtype=np.uint8)
     
     def draw(self):
         screen.blit(self.surfaceOne, self.offset)
-        for raw in self.array:
-            for pixel in raw:
+        for i,raw in enumerate(self.array):
+            for j,pixel in enumerate(raw):
                 pixel.draw(self.surfaceOne, Gray)
                 if clic_izquierdo:
-                    pixel.paint((mouse_pos[0]-offset_surface[0],mouse_pos[1]-offset_surface[1]),self.margin)
+                    pixel.paint(self.matriz[i,j])
     def set_margin(self,slider):
         self.margin = slider.get_value()*20 # Va de 0 a 20 pixeles
     
     def update(self, slider):
         self.draw()
         self.set_margin(slider)
+    def set_show(self):
+        self.ishow = not self.ishow
+    
+    
 
+def preview_function(board, matriz):
+    print(f"original size:{matriz.shape} ")
+    print(f"reduced size:{greduce(matriz,4).shape} ")
+    board.matriz = greduce(matriz,4)
+    board.set_show()
+    print("¡El botón preview ha sido clickeado!")
 
 def my_function():
     print("¡El botón ha sido clickeado!")
@@ -97,16 +109,20 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        button.handle_event(event)
+        button.handle_event(event,"","")
+        previewButton.handle_event(event,board_preview,myboard.matriz)
         myboard.handle_event(event)
 
 offset_surface = [10, centersize[1]-centerboard[1]]
-#mygrid = Grid(board_size,offset_surface)
+
 
 myboard = Blackboard(board_size,offset_surface)
+board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], centersize[1]-centerboard[1]])
 
 slider = Slider(10, 10, 600, 20)
+previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
 button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
+
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
 while True:
     events()
@@ -124,10 +140,12 @@ while True:
     
 
     slider.update(screen)
-
     button.draw(screen)
+    previewButton.draw(screen)
+    
 
-    #mygrid.update(slider)
+    if board_preview.ishow:
+        board_preview.update(slider)
     
     myboard.update(screen,slider)
     
