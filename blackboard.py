@@ -37,7 +37,8 @@ class Blackboard:
             for i in range(x-self.r, x+self.r):
                 for j in range(y-self.r, y+self.r):
                     if i >= 0 and i < self.matriz.shape[0] and j >= 0 and j < self.matriz.shape[1]:
-                        self.matriz[i][j] = 255
+                        if np.sqrt((x-i)**2+(y-j)**2)<self.r:
+                            self.matriz[i][j] = 255
             self.update_surface()
 
     def handle_event(self, event):
