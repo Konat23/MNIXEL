@@ -8,10 +8,15 @@ RED = (255, 0, 0)
 
 class Slider:
     def __init__(self, x, y, width, height):
+        self.value = 0.5
         self.rect = pygame.Rect(x, y, width, height)
-        self.handle = pygame.Rect(x, y, 20, height)
+
+        # Iniciar x segun value
+        initial_x = self.value*(self.rect.width - 20)+self.rect.left
+        self.handle = pygame.Rect(initial_x, y, 20, height)
         self.dragging = False
-        self.value = 0
+        
+        
 
     def draw(self, screen):
         pygame.draw.rect(screen, WHITE, self.rect)
