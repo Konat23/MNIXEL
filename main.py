@@ -32,12 +32,39 @@ from slider import Slider
 from button import Button
 from blackboard import Blackboard
 from image_p import *
+from mytools import numeros_aleatorios
 pygame.init()
 screen = pygame.display.set_mode(size) #Crear ventana
 
 
 clock = pygame.time.Clock()
+# BEGIN: qv8d3f5gj2p1
 
+class Text():
+    def __init__(self, font_size, text, color, pos):
+        self.font = pygame.font.Font(None, font_size)
+        self.text = text
+        self.color = color
+        self.pos = pos
+
+    def draw(self, surface):
+        text_surface = self.font.render(self.text, True, self.color)
+        surface.blit(text_surface, self.pos)
+
+class Text_message(Text):
+    def __init__(self, font_size, text, color, pos):
+        super().__init__(font_size, text, color, pos)
+        self.numeros = numeros_aleatorios()
+        self.i  = 0 # indice de numeros
+        self.num = self.numeros[self.i]
+        self.text = f"Dibuja el siguiente número: {self.num}"
+    def next(self):
+        self.i += 1
+        self.num = self.numeros[self.i]
+        self.text = f"Dibuja el siguiente número: {self.num}"
+
+
+# END: qv8d3f5gj2p1
 
 class Pixel():
     def __init__(self, loc) -> None:
@@ -98,7 +125,8 @@ def preview_function(board, matriz):
     board.set_show()
     print("¡El botón preview ha sido clickeado!")
 
-def my_function():
+def next_function(text):
+    text.next()
     print("¡El botón ha sido clickeado!")
 
 
@@ -109,7 +137,7 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        button.handle_event(event)
+        nextButton.handle_event(event,text)
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)
@@ -124,7 +152,10 @@ board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], cen
 slider = Slider(10, 10, 600, 20)
 previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
 limpiarButton = Button(0,size[1]-40,100,40,"Limpiar",myboard.clear)
-button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
+nextButton = Button(size[0]-100, size[1]-40, 100, 40, "Next", next_function)
+
+# Crear texto
+text = Text_message(30, f"Dibuja el siguiente número:", White, (10, 100))
 
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
 while True:
@@ -143,9 +174,13 @@ while True:
     
 
     slider.update(screen)
-    button.draw(screen)
+    nextButton.draw(screen)
     previewButton.draw(screen)
     limpiarButton.draw(screen)
+
+    # Texto
+    
+    text.draw(screen)
     
 
     if board_preview.ishow:
