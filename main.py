@@ -109,7 +109,7 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        button.handle_event(event,"","")
+        button.handle_event(event)
         previewButton.handle_event(event,board_preview,myboard.matriz)
         myboard.handle_event(event)
 
@@ -119,6 +119,7 @@ offset_surface = [10, centersize[1]-centerboard[1]]
 myboard = Blackboard(board_size,offset_surface)
 board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], centersize[1]-centerboard[1]])
 
+# Crear botones y slider
 slider = Slider(10, 10, 600, 20)
 previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
 button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
