@@ -74,12 +74,12 @@ class Grid():
         self.matriz = np.zeros((int(size[0]),int(size[1])), dtype=np.uint8)
     
     def draw(self):
-        screen.blit(self.surfaceOne, self.offset)
         for i,raw in enumerate(self.array):
             for j,pixel in enumerate(raw):
                 pixel.draw(self.surfaceOne, Gray)
                 if clic_izquierdo:
                     pixel.paint(self.matriz[i,j])
+        screen.blit(self.surfaceOne, self.offset)
     def set_margin(self,slider):
         self.margin = slider.get_value()*20 # Va de 0 a 20 pixeles
     
@@ -111,6 +111,7 @@ def events():
         slider.handle_event(event)
         button.handle_event(event)
         previewButton.handle_event(event,board_preview,myboard.matriz)
+        limpiarButton.handle_event(event)
         myboard.handle_event(event)
 
 offset_surface = [10, centersize[1]-centerboard[1]]
@@ -122,6 +123,7 @@ board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], cen
 # Crear botones y slider
 slider = Slider(10, 10, 600, 20)
 previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
+limpiarButton = Button(0,size[1]-40,100,40,"Limpiar",myboard.clear)
 button = Button(size[0]-100, size[1]-40, 100, 40, "Enviar", my_function)
 
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
@@ -143,6 +145,7 @@ while True:
     slider.update(screen)
     button.draw(screen)
     previewButton.draw(screen)
+    limpiarButton.draw(screen)
     
 
     if board_preview.ishow:

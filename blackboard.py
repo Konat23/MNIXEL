@@ -40,7 +40,10 @@ class Blackboard:
                         if np.sqrt((x-i)**2+(y-j)**2)<self.r:
                             self.matriz[i][j] = 255
             self.update_surface()
-
+    def clear(self):
+        self.matriz = np.zeros(self.matriz.shape, dtype=np.uint8)
+        self.update_surface()
+        
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
