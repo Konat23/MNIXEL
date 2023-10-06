@@ -17,7 +17,15 @@ filas = int(28*scale)
 columnas = int(28*scale)
 border = 2
 
+X_new = []
+y_new = []
 
+class Salida():
+    def __init__(self) -> None:
+        self.X = np.empty(())
+        self.y = np.empty(())
+        
+salida = Salida()
 
 
 board_size =(448,448) #tamaño de de la zona donde se dibujara
@@ -38,7 +46,6 @@ screen = pygame.display.set_mode(size) #Crear ventana
 
 
 clock = pygame.time.Clock()
-# BEGIN: qv8d3f5gj2p1
 
 class Text():
     def __init__(self, font_size, text, color, pos):
@@ -59,12 +66,23 @@ class Text_message(Text):
         self.num = self.numeros[self.i]
         self.text = f"Dibuja el siguiente número: {self.num}"
     def next(self):
-        self.i += 1
-        self.num = self.numeros[self.i]
-        self.text = f"Dibuja el siguiente número: {self.num}"
+        
+        if self.i==9:
+            self.i = 0
+            self.numeros = numeros_aleatorios()
+            self.num = self.numeros[self.i]
+            self.text = f"Dibuja el siguiente número: {self.num}"
+            
+        else:
+            self.i += 1
+            self.num = self.numeros[self.i]
+            self.text = f"Dibuja el siguiente número: {self.num}"
+    def is_10complete(self):
+        return self.i==9
 
 
-# END: qv8d3f5gj2p1
+
+
 
 class Pixel():
     def __init__(self, loc) -> None:
@@ -116,7 +134,9 @@ class Grid():
     def set_show(self):
         self.ishow = not self.ishow
     
-    
+
+
+
 
 def preview_function(board, matriz):
     print(f"original size:{matriz.shape} ")
@@ -125,9 +145,27 @@ def preview_function(board, matriz):
     board.set_show()
     print("¡El botón preview ha sido clickeado!")
 
-def next_function(text):
+def next_function(text,myboard,matriz):
+
+
+    # Guardar el numero dibujado
+    X_new.append(greduce(matriz,4))
+    y_new.append(text.num)
+    print(f"Ultimo numero guardado: {y_new[-1]}")
+    print(f"Se han guardado {len(X_new)} numeros de tamaño {X_new[-1].shape}")
+    
+    if text.is_10complete():
+        print("Se han guardado 10 numeros")
+        salida.X = np.stack(X_new)
+        salida.y = np.array(y_new)
+
+        # inveritmos las dimensiones para que quede en el formato de MNIST
+        salida.X = np.transpose(salida.X,(0,2,1))
+        np.savez_compressed('MNIST.npz',X=salida.X,y=salida.y)
+        print("Se ha guardado el archivo MNIST.npz")
+    
     text.next()
-    print("¡El botón ha sido clickeado!")
+    myboard.clear()
 
 
 def events():
@@ -137,7 +175,7 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        nextButton.handle_event(event,text)
+        nextButton.handle_event(event,text,myboard,myboard.matriz)
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)

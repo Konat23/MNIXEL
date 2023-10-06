@@ -37,7 +37,7 @@ def greduce(g0,n):
             g1[j,i]=B[2*j, 2*i]
     n = n-1
     # repetimos la operacion si hace falta
-    print(n)
+    #print(n)
     if n>0:
         g1 = greduce(g1,n)
 
