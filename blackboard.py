@@ -7,6 +7,7 @@ class Blackboard:
         self.gray_image = pygame.surfarray.make_surface(np.stack((self.matriz,) * 3, axis=-1))
         self.pos = pos
         self.dragging = False
+        self.r = 5 # Radio del punter
 
     def get(self, key):
         return self.matriz
@@ -20,7 +21,8 @@ class Blackboard:
     def draw(self, screen):
         screen.blit(self.gray_image, self.pos)
 
-    def update(self,screen):
+    def update(self,screen, slider):
+        self.r = int(slider.get_value()*20+5)
         self.paint()
         self.update_surface()
         self.draw(screen)
@@ -32,8 +34,8 @@ class Blackboard:
             x = int(pos[0]-self.pos[0])
             y = int(pos[1]-self.pos[1])
 
-            for i in range(x-10, x+10):
-                for j in range(y-10, y+10):
+            for i in range(x-self.r, x+self.r):
+                for j in range(y-self.r, y+self.r):
                     if i >= 0 and i < self.matriz.shape[0] and j >= 0 and j < self.matriz.shape[1]:
                         self.matriz[i][j] = 255
             self.update_surface()

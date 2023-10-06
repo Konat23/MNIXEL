@@ -129,7 +129,7 @@ while True:
 
     #mygrid.update(slider)
     
-    myboard.update(screen)
+    myboard.update(screen,slider)
     
     #-----------FIN ZONA DE DIBUJO ---------------#
     #Actualizar pantalla
