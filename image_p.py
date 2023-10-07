@@ -43,6 +43,66 @@ def greduce(g0,n):
 
     return g1
 
+def shift_to_center(image):
+    x_l = image.shape[1]
+    y_l = image.shape[0]
+
+
+    # Centro de la imagen
+    x_centro = np.floor(x_l/2)
+    y_centro = np.floor(y_l/2)
+
+    # Centro de mas del numero
+    xi,yi = mass_center(image)
+
+    dx = int(x_centro - xi)
+    dy = int(y_centro - yi)
+
+    shift_image = np.zeros_like(image)
+    print(f"centro de masa: {xi},{yi}")
+    print(f"centro de imagen: {x_centro},{y_centro}")
+    print(f"dx: {dx}")
+    print(f"dy: {dy}")
+    # Desplazamos la imagen
+    if (dy>=0) and (dx>=0):
+        dx = abs(dx)
+        dy = abs(dy)
+        shift_image[dy:,dx:] = image[0:y_l-dy,0:x_l-dx]
+    if (dy>=0) and (dx<0):
+        dx = abs(dx)
+        dy = abs(dy)
+        shift_image[dy:,0:x_l-dx] = image[0:y_l-dy,dx:]
+    if (dy<0) and (dx>=0):
+        dx = abs(dx)
+        dy = abs(dy)
+        shift_image[0:y_l-dy,dx:] = image[dy:,0:x_l-dx]
+    if (dy<0) and (dx<0):
+        dx = abs(dx)
+        dy = abs(dy)
+        shift_image[0:y_l-dy,0:x_l-dx] = image[dy:,dx:]
+
+
+
+
+    return shift_image
+
+def mass_center(image):
+    """
+    Esta funcion calcula el centro de masa de un arreglo bidimensional de numpy
+    INPUT:
+    image: array [i,j].
+
+    OUTPUT:
+    (x,y) . Pixel donde esta el centro de masa
+    """
+    x = np.arange(0, image.shape[1], 1)
+    y = np.arange(0, image.shape[0], 1)
+    xv, yv = np.meshgrid(x, y)
+
+    xc = np.sum(image*xv)/np.sum(image)
+    yc = np.sum(image*yv)/np.sum(image)
+
+    return (np.around(xc),np.around(yc))
 if __name__ == '__main__':
     matriz = np.random.rand(8,8)
     print(greduce(matriz,2))

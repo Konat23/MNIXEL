@@ -3,6 +3,8 @@
 Codigo principal MNIXEL 
 """
 import numpy as np
+
+from model.predictor import *
 # RGB Colores
 Black = (0, 0, 0)
 White =(255, 255, 255)
@@ -64,7 +66,7 @@ class Text_message(Text):
         self.numeros = numeros_aleatorios()
         self.i  = 0 # indice de numeros
         self.num = self.numeros[self.i]
-        self.text = f"Dibuja el siguiente número: {self.num}"
+        self.text = text
     def next(self):
         
         if self.i==9:
@@ -167,6 +169,17 @@ def next_function(text,myboard,matriz):
     text.next()
     myboard.clear()
 
+def predict_function(matriz,Text_message):
+    matriz = greduce(matriz,4) # reducir tamaño
+    matriz = np.transpose(matriz,(1,0)) # invertir dimensiones
+    matriz = shift_to_center(matriz)
+    matriz = matriz.flatten() #reshape a 1D
+    matriz = matriz[None,:] # reshape
+    print(matriz.shape)
+    Y = y_class(y_prob(W,B,matriz))
+    Text_message.text = f"El numero es: {Y[0]}"
+
+
 
 def events():
     for event in pygame.event.get():
@@ -179,6 +192,7 @@ def events():
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)
+        predictButton.handle_event(event,myboard.matriz,text_adivinado)
 
 offset_surface = [10, centersize[1]-centerboard[1]]
 
@@ -188,12 +202,14 @@ board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], cen
 
 # Crear botones y slider
 slider = Slider(10, 10, 600, 20)
-previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
+previewButton = Button(size[0]-200-10, size[1]-40, 100, 40, "Preview", preview_function)
 limpiarButton = Button(0,size[1]-40,100,40,"Limpiar",myboard.clear)
 nextButton = Button(size[0]-100, size[1]-40, 100, 40, "Next", next_function)
+predictButton = Button(100+10,size[1]-40, 100, 40, "Predict", predict_function)
 
 # Crear texto
-text = Text_message(30, f"Dibuja el siguiente número:", White, (10, 100))
+text = Text(30, f"Dibuja cualquier numero", White, (10, 100))
+text_adivinado = Text(30, f"El numero es", White, (10, 600))
 
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
 while True:
@@ -215,10 +231,12 @@ while True:
     nextButton.draw(screen)
     previewButton.draw(screen)
     limpiarButton.draw(screen)
+    predictButton.draw(screen)
 
     # Texto
     
     text.draw(screen)
+    text_adivinado.draw(screen)
     
 
     if board_preview.ishow:
