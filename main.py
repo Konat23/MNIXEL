@@ -139,11 +139,8 @@ class Grid():
 
 
 def preview_function(board, matriz):
-    print(f"original size:{matriz.shape} ")
-    print(f"reduced size:{greduce(matriz,4).shape} ")
     board.matriz = greduce(matriz,4)
     board.set_show()
-    print("¡El botón preview ha sido clickeado!")
 
 def next_function(text,myboard,matriz):
 
@@ -179,6 +176,9 @@ def events():
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)
+        if event.type == pygame.MOUSEBUTTONUP:
+            board_preview.matriz = greduce(myboard.matriz,4)
+            board_preview.draw()
 
 offset_surface = [10, centersize[1]-centerboard[1]]
 
