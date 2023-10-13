@@ -143,7 +143,7 @@ def preview_function(board, matriz):
     board.matriz = greduce(matriz,4)
     board.set_show()
 
-def next_function(text,myboard,matriz,progressBar):
+def next_function(text,myboard,matriz,progressBar,text_packs):
 
 
     # Guardar el numero dibujado
@@ -161,7 +161,7 @@ def next_function(text,myboard,matriz,progressBar):
         salida.X = np.transpose(salida.X,(0,2,1))
         np.savez_compressed('MNIST.npz',X=salida.X,y=salida.y)
         print("Se ha guardado el archivo MNIST.npz")
-    
+        text_packs.text = f"Paquetes guardados: {round(len(X_new)/10)}"
     text.next()
     myboard.clear()
 
@@ -173,7 +173,7 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        nextButton.handle_event(event,text,myboard,myboard.matriz,progressBar)
+        nextButton.handle_event(event,text,myboard,myboard.matriz,progressBar,text_packs)
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)
@@ -181,20 +181,21 @@ def events():
             board_preview.matriz = greduce(myboard.matriz,4)
             board_preview.draw()
 
-offset_surface = [10, centersize[1]-centerboard[1]]
+offset_surface = [10, 70]
 
 
 myboard = Blackboard(board_size,offset_surface)
-board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], centersize[1]-centerboard[1]])
+board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0]-10, 70])
 
 # Crear botones y slider
 slider = Slider(10, 10, 448, 20)
 previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
-limpiarButton = Button(0,size[1]-40,100,40,"Limpiar",myboard.clear)
+limpiarButton = Button(0,size[1]-40,100,40,"Clear",myboard.clear)
 nextButton = Button(size[0]-100, size[1]-40, 100, 40, "Next", next_function)
 
 # Crear texto
-text = Text_message(30, f"Dibuja el siguiente número:", White, (10, 100))
+text = Text_message(30, f"Dibuja el siguiente número:", White, (10, 40))
+text_packs = Text(30, f"Paquetes guardados: 0", White, (10, 580))
 
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
 
@@ -220,15 +221,17 @@ while True:
     previewButton.draw(screen)
     limpiarButton.draw(screen)
 
-    # Texto
     
-    text.draw(screen)
     
 
     if board_preview.ishow:
         board_preview.update(slider)
     
     myboard.update(screen,slider)
+
+    # Texto
+    text.draw(screen)
+    text_packs.draw(screen)
 
     
     progressBar.draw()

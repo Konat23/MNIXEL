@@ -20,7 +20,7 @@ class ProgressBar:
         rect_width = 44
         rect_height = 44
         posx = 14
-        posy = 584
+        posy = 530
         spacing = 0
 
         for i in range(10):
