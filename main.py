@@ -39,6 +39,7 @@ import pygame, sys
 from slider import Slider
 from button import Button
 from blackboard import Blackboard
+from ProgressBar import ProgressBar
 from image_p import *
 from mytools import numeros_aleatorios
 pygame.init()
@@ -142,7 +143,7 @@ def preview_function(board, matriz):
     board.matriz = greduce(matriz,4)
     board.set_show()
 
-def next_function(text,myboard,matriz):
+def next_function(text,myboard,matriz,progressBar):
 
 
     # Guardar el numero dibujado
@@ -150,7 +151,7 @@ def next_function(text,myboard,matriz):
     y_new.append(text.num)
     print(f"Ultimo numero guardado: {y_new[-1]}")
     print(f"Se han guardado {len(X_new)} numeros de tamaño {X_new[-1].shape}")
-    
+    progressBar.count=text.i +1 # actualizamos la barra de carga
     if text.is_10complete():
         print("Se han guardado 10 numeros")
         salida.X = np.stack(X_new)
@@ -172,7 +173,7 @@ def events():
             pygame.quit()
             sys.exit()
         slider.handle_event(event)
-        nextButton.handle_event(event,text,myboard,myboard.matriz)
+        nextButton.handle_event(event,text,myboard,myboard.matriz,progressBar)
         previewButton.handle_event(event,board_preview,myboard.matriz)
         limpiarButton.handle_event(event)
         myboard.handle_event(event)
@@ -187,7 +188,7 @@ myboard = Blackboard(board_size,offset_surface)
 board_preview = Grid([board_size[0],board_size[1]],[size[0] - board_size[0], centersize[1]-centerboard[1]])
 
 # Crear botones y slider
-slider = Slider(10, 10, 600, 20)
+slider = Slider(10, 10, 448, 20)
 previewButton = Button(size[0]-200, size[1]-40, 100, 40, "Preview", preview_function)
 limpiarButton = Button(0,size[1]-40,100,40,"Limpiar",myboard.clear)
 nextButton = Button(size[0]-100, size[1]-40, 100, 40, "Next", next_function)
@@ -196,6 +197,9 @@ nextButton = Button(size[0]-100, size[1]-40, 100, 40, "Next", next_function)
 text = Text_message(30, f"Dibuja el siguiente número:", White, (10, 100))
 
 M_test = np.random.randint(0, 256, board_size, dtype=np.uint8)
+
+# Barra de carga
+progressBar = ProgressBar(screen)
 while True:
     events()
     screen.fill('gray15') #color de fondo y limpia pantalla
@@ -225,7 +229,9 @@ while True:
         board_preview.update(slider)
     
     myboard.update(screen,slider)
+
     
+    progressBar.draw()
     #-----------FIN ZONA DE DIBUJO ---------------#
     #Actualizar pantalla
     pygame.display.flip()
